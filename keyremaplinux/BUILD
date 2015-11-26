@@ -2,12 +2,24 @@ package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
+exports_files([
+    "LICENSE",
+])
+
+package_group(
+    name = "internal",
+    packages = ["//keyremaplinux/..."],
+)
+
 cc_binary(
     name = "keyremaplinux",
-    srcs = ["keyremaplinux.cc"],
-    linkopts = [
-        "-lpthread",
-        "-lm",
+    srcs = [
+      "device_remapping_daemon.cc",
+      "device_remapping_daemon.h",
+      "keyremaplinux.cc",
     ],
-    deps = [],
+    deps = [
+      "//keyremaplinux/remapper:remapper",
+      "//keyremaplinux/util:logging",
+    ],
 )
