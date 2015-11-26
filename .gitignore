@@ -1,3 +1,9 @@
+# Emacs temporary files
+*~
+
+# Bazel temporary directories
+bazel-*
+
 # Compiled Object files
 *.slo
 *.lo
