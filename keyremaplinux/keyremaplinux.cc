@@ -13,9 +13,11 @@ namespace keyremaplinux {
 
   using namespace std;
 
-  static const string deviceRoot = "/dev/input/by-id";
+  //static const string deviceRoot = "/dev/input/by-id";
+  static const string deviceRoot = "/dev/input";
 
-  static const string keyboardSubstr = "event-kbd";
+  //static const string keyboardSubstr = "event-kbd";
+  static const string keyboardSubstr = "event";
 
   vector<string> FindKeyboardDevices() {
     vector<string> result;
@@ -50,8 +52,8 @@ int main(int argc, char* argv[]) {
     threads.push_back(thread);
   }
 
+  LOG(INFO) << "Waiting for threads";
   for (pthread_t thread : threads) {
-    printf("WAITING FOR THREAD");
     CHECK(!pthread_join(thread, nullptr));
   }
   return 0;

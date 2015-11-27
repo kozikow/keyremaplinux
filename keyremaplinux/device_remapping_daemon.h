@@ -25,6 +25,8 @@ private:
 
   void EnableUInputEvents();
 
+  void CreateDeviceFromUInput();
+
   pthread_t StartRemappingThread();
 
   static void* RemappingThreadMainStub(void* data);
@@ -33,8 +35,12 @@ private:
 
   string inputPath_ = "";
 
+  string outputPath_ = "";
+
+  // Descriptor of device we are reading from
   int inputDescriptor_ = 0;
 
+  // Descriptor of device we are writing to
   int outputDescriptor_ = 0;
 
   Remapper* remapper_ = nullptr;
