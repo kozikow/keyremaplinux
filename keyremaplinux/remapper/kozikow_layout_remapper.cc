@@ -1,18 +1,16 @@
-#include <linux/input.h>
-
-#include "remapper.h"
+#include "kozikow_layout_remapper.h"
+#include "../util/logging.h"
 
 namespace keyremaplinux {
 
 using namespace std;
 
-class KozikowLayoutRemapper : Remapper {
-public:
-  vector<input_event> remap(input_event event) {
-    vector<input_event> result;
-    result.push_back(event);
-    return result;
-  }
-};
+vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
+  LOG(INFO) << "Got event type: " << event.type << ' ' <<
+    " code: " << event.code << " value: " << event.value;
+  vector<input_event> result;
+  result.push_back(event);
+  return result;
+}
 
 }  // end namespace keyremaplinux

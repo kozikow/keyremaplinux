@@ -13,6 +13,8 @@ public:
 
   virtual ~DeviceRemappingDaemon();
 
+  pthread_t Run();
+
 private:
 
   DeviceRemappingDaemon(const DeviceRemappingDaemon& daemon) = delete;
@@ -21,7 +23,17 @@ private:
 
   static string FindUInputDevice();
 
+  void EnableUInputEvents();
+
+  pthread_t StartRemappingThread();
+
+  static void* RemappingThreadMainStub(void* data);
+
+  void RemappingThreadMain();
+
   string inputPath_ = "";
+
+  int inputDescriptor_ = 0;
 
   int outputDescriptor_ = 0;
 

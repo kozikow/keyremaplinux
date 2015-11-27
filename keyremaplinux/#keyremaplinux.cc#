@@ -51,7 +51,6 @@ int main(int argc, char* argv[]) {
   }
 
   for (pthread_t thread : threads) {
-    printf("WAITING FOR THREAD");
     CHECK(!pthread_join(thread, nullptr));
   }
   return 0;

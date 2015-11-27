@@ -10,11 +10,11 @@ using namespace std;
 
 class Remapper {
 public:
-  Remapper();
+  Remapper() {};
 
-  virtual ~Remapper();
+  virtual ~Remapper() {};
 
-  virtual vector<input_event> remap(input_event event) = 0;
+  virtual vector<input_event> Remap(input_event event) = 0;
 
 private:
 

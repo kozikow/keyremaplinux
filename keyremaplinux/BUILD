@@ -18,6 +18,7 @@ cc_binary(
       "device_remapping_daemon.h",
       "keyremaplinux.cc",
     ],
+    linkopts = ["-pthread"],
     deps = [
       "//keyremaplinux/remapper:remapper",
       "//keyremaplinux/util:logging",
