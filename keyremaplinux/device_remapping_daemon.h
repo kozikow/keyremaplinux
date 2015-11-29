@@ -32,6 +32,9 @@ private:
   static void* RemappingThreadMainStub(void* data);
 
   void RemappingThreadMain();
+  
+  // Outputs event that signals end of output chunk.
+  void OutputSyncEvent();
 
   string inputPath_ = "";
 

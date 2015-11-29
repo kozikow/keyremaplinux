@@ -21,6 +21,8 @@ DeviceRemappingDaemon::~DeviceRemappingDaemon() {
   if (outputDescriptor_ > 0) {
     ioctl(outputDescriptor_, UI_DEV_DESTROY);
   }
+  close(outputDescriptor_);
+  close(inputDescriptor_);
 }
 
 DeviceRemappingDaemon::DeviceRemappingDaemon(const string& inputPath,
@@ -70,8 +72,8 @@ void DeviceRemappingDaemon::CreateDeviceFromUInput() {
   outputPath_ = "uinput-device";
   snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, outputPath_.c_str());
   uidev.id.bustype = BUS_USB;
-  uidev.id.vendor  = 0x1234;
-  uidev.id.product = 0xfedc;
+  uidev.id.vendor  = 0x1;
+  uidev.id.product = 0x1;
   uidev.id.version = 1;
   CHECK(write(outputDescriptor_, &uidev, sizeof(uidev)) > 0);
   CHECK(!ioctl(outputDescriptor_, UI_DEV_CREATE));
@@ -96,17 +98,35 @@ void* DeviceRemappingDaemon::RemappingThreadMainStub(void* deviceRemappingDaemon
 }
 
 void DeviceRemappingDaemon::RemappingThreadMain() {
-  struct input_event ev;
+  input_event ev;
   while(true) {
     LOG(INFO) << "Waiting for event for device " + inputPath_;
     CHECK(read(inputDescriptor_, &ev, sizeof(ev)) > 0);
-    LOG(INFO) << "Read event " << ev.type << " " << ev.code << " " << ev.value << " from device " + inputPath_;
-    auto remapped = remapper_->Remap(ev);
-    for (auto ev : remapped) {
-      LOG(INFO) << "Write event " << ev.type << " " << ev.code << " " << ev.value << " to " + outputPath_;
-      CHECK(write(outputDescriptor_, &ev, sizeof(ev)) > 0); //write(outputDescriptor_, &ev, sizeof(ev));
+    //    LOG(INFO) << "Read event " << ev.type << " " << ev.code << " " << ev.value << " from device " + inputPath_;
+    vector<input_event> remapped = remapper_->Remap(ev);
+    for (input_event event : remapped) {
+      CHECK(write(outputDescriptor_, &event, sizeof(event)) > 0);
+      //write(outputDescriptor_, &ev, sizeof(ev));
     }
+
+    /*memset(&ev, 0, sizeof(ev));
+    ev.type = EV_KEY;
+    ev.code = KEY_X;
+    ev.value = 1;
+    CHECK(write(outputDescriptor_, &ev, sizeof(ev)) >= 0);*/
+
+    OutputSyncEvent();
   }
 }
+
+  void DeviceRemappingDaemon::OutputSyncEvent() {
+    LOG(INFO) << "Sending syn event";
+    struct input_event ev;
+    memset(&ev, 0, sizeof(ev));
+    ev.type = EV_SYN;
+    ev.code = 0;
+    ev.value = 0;
+    CHECK(write(outputDescriptor_, &ev, sizeof(ev)) >= 0);
+  }
 
 }  // end namespace keyremaplinux
