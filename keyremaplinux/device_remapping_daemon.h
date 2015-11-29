@@ -4,6 +4,7 @@
 #include <string>
 
 #include "device/input_device.h"
+#include "device/output_device.h"
 #include "remapper/remapper.h"
 
 namespace keyremaplinux {
@@ -15,7 +16,7 @@ public:
   virtual ~DeviceRemappingDaemon();
 
   pthread_t Run();
-
+  
 private:
   static string FindUInputDevice();
   
@@ -32,6 +33,11 @@ private:
   // Outputs event that signals end of output chunk.
   void OutputSyncEvent();
 
+  DeviceRemappingDaemon(const DeviceRemappingDaemon& daemon) = delete;
+
+  void operator=(const DeviceRemappingDaemon&) = delete;
+
+
   string outputPath_ = "";
 
   // Descriptor of device we are writing to
@@ -40,11 +46,8 @@ private:
   Remapper* remapper_ = nullptr;
   
   InputDevice* inputDevice_ = nullptr;
-
-  DeviceRemappingDaemon(const DeviceRemappingDaemon& daemon) = delete;
-
-  void operator=(const DeviceRemappingDaemon&) = delete;
-
+  
+  OutputDevice* outputDevice_ = nullptr;
 };
 
 }  // end namespace keyremaplinux

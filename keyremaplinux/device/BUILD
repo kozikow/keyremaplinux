@@ -8,9 +8,11 @@ cc_library(
     name = "device",
     hdrs = [
         "input_device.h",
+        "output_device.h",
     ],
     srcs = [
         "input_device.cc",
+        "output_device.cc",
     ],
     deps = [
       "//keyremaplinux/util:logging",
