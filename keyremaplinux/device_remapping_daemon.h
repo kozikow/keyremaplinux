@@ -22,6 +22,8 @@ private:
   void operator=(const DeviceRemappingDaemon&) = delete;
 
   static string FindUInputDevice();
+  
+  void GrabInputDevice();
 
   void EnableUInputEvents();
 

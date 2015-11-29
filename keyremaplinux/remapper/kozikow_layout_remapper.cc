@@ -10,9 +10,13 @@ vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
   if (event.type == EV_KEY || event.type == EV_SYN) {
     LOG(INFO) << "Got event type: " << event.type << ' ' <<
       " code: " << event.code << " value: " << event.value;
-    event.code += 1;
+    if (event.code == KEY_D) {
+      event.code += 1;
+    }
     result.push_back(event);
     return result;
+  } else {
+    LOG(INFO) << "Unrecognized event type: " << event.type;
   }
   return result;
 }

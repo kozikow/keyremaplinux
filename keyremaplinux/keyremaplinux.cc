@@ -13,11 +13,9 @@ namespace keyremaplinux {
 
   using namespace std;
 
-  //static const string deviceRoot = "/dev/input/by-id";
-  static const string deviceRoot = "/dev/input";
+  static const string deviceRoot = "/dev/input/by-path";
 
-  //static const string keyboardSubstr = "event-kbd";
-  static const string keyboardSubstr = "event";
+  static const string keyboardSubstr = "event-kbd";
 
   vector<string> FindKeyboardDevices() {
     vector<string> result;

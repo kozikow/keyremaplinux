@@ -21,6 +21,7 @@ DeviceRemappingDaemon::~DeviceRemappingDaemon() {
   if (outputDescriptor_ > 0) {
     ioctl(outputDescriptor_, UI_DEV_DESTROY);
   }
+  ioctl(inputDescriptor_, EVIOCGRAB, (void*)0); // ungrab
   close(outputDescriptor_);
   close(inputDescriptor_);
 }
@@ -29,6 +30,7 @@ DeviceRemappingDaemon::DeviceRemappingDaemon(const string& inputPath,
     Remapper* remapper) : inputPath_(inputPath), remapper_(remapper) {
   inputDescriptor_ = open(inputPath_.c_str(), O_RDONLY);
   CHECK(inputDescriptor_ > 0);
+  GrabInputDevice();
 
   string uInputPath = FindUInputDevice();
   CHECK(uInputPath != "");
@@ -47,6 +49,10 @@ string DeviceRemappingDaemon::FindUInputDevice() {
     }
   }
   return "";
+}
+  
+void DeviceRemappingDaemon::GrabInputDevice() {
+  ioctl(inputDescriptor_, EVIOCGRAB, (void*)1);
 }
 
 void DeviceRemappingDaemon::EnableUInputEvents() {
@@ -102,31 +108,24 @@ void DeviceRemappingDaemon::RemappingThreadMain() {
   while(true) {
     LOG(INFO) << "Waiting for event for device " + inputPath_;
     CHECK(read(inputDescriptor_, &ev, sizeof(ev)) > 0);
-    //    LOG(INFO) << "Read event " << ev.type << " " << ev.code << " " << ev.value << " from device " + inputPath_;
     vector<input_event> remapped = remapper_->Remap(ev);
     for (input_event event : remapped) {
       CHECK(write(outputDescriptor_, &event, sizeof(event)) > 0);
-      //write(outputDescriptor_, &ev, sizeof(ev));
     }
-
-    /*memset(&ev, 0, sizeof(ev));
-    ev.type = EV_KEY;
-    ev.code = KEY_X;
-    ev.value = 1;
-    CHECK(write(outputDescriptor_, &ev, sizeof(ev)) >= 0);*/
-
-    OutputSyncEvent();
+    if (remapped.size() > 0) {
+      OutputSyncEvent();
+    }
   }
 }
 
-  void DeviceRemappingDaemon::OutputSyncEvent() {
-    LOG(INFO) << "Sending syn event";
-    struct input_event ev;
-    memset(&ev, 0, sizeof(ev));
-    ev.type = EV_SYN;
-    ev.code = 0;
-    ev.value = 0;
-    CHECK(write(outputDescriptor_, &ev, sizeof(ev)) >= 0);
-  }
+void DeviceRemappingDaemon::OutputSyncEvent() {
+  LOG(INFO) << "Sending syn event";
+  struct input_event ev;
+  memset(&ev, 0, sizeof(ev));
+  ev.type = EV_SYN;
+  ev.code = 0;
+  ev.value = 0;
+  CHECK(write(outputDescriptor_, &ev, sizeof(ev)) >= 0);
+}
 
 }  // end namespace keyremaplinux
