@@ -1,9 +1,7 @@
 #include <string>
 
 #include <linux/input.h>
-#include <unistd.h>
 #include <pthread.h>
-#include <stdio.h>
 
 #include "device_remapping_daemon.h"
 #include "util/logging.h"

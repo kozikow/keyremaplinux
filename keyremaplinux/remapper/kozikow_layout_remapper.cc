@@ -7,7 +7,7 @@ using namespace std;
 
 vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
   vector<input_event> result;
-  if (event.type == EV_KEY || event.type == EV_SYN) {
+  if (event.type == EV_KEY) {
     LOG(INFO) << "Got event type: " << event.type << ' ' <<
       " code: " << event.code << " value: " << event.value;
     if (event.code == KEY_D) {
