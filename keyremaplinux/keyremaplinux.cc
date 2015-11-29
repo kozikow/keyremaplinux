@@ -36,13 +36,14 @@ namespace keyremaplinux {
 }  // end namespace keyremaplinux
 
 int main(int argc, char* argv[]) {
-  std::vector<std::string> devices = keyremaplinux::FindKeyboardDevices();
+  using namespace std;
+  vector<string> devices = keyremaplinux::FindKeyboardDevices();
   if (devices.empty()) {
     LOG(WARNING) << "Did not find any input devices";
   }
 
   keyremaplinux::Remapper* remapper = new keyremaplinux::KozikowLayoutRemapper();
-  std::vector<pthread_t> threads;
+  vector<pthread_t> threads;
   for (auto device : devices) {
     keyremaplinux::DeviceRemappingDaemon* daemon =
         new keyremaplinux::DeviceRemappingDaemon(device, remapper);

@@ -13,6 +13,7 @@ namespace keyremaplinux {
 
 using namespace std;
 
+// Dependent on the OS.
 static const string uinputDevicePaths[] = {"/dev/input/uinput", "/dev/uinput"};
 
 OutputDevice::~OutputDevice() {
@@ -78,7 +79,6 @@ void OutputDevice::WriteInputEvent(input_event event) {
 }
 
 void OutputDevice::WriteSyncEvent() {
-  LOG(INFO) << "Sending syn event";
   struct input_event ev;
   memset(&ev, 0, sizeof(ev));
   ev.type = EV_SYN;

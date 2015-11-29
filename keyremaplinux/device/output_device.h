@@ -7,6 +7,8 @@ namespace keyremaplinux {
   
 using namespace std;
 
+// Actual device we will be writing to is created using the uInput system.
+// See http://thiemonge.org/getting-started-with-uinput
 class OutputDevice {
 public:
   OutputDevice();
@@ -24,8 +26,6 @@ private:
   void EnableUInputEvents();
 
   void CreateDeviceFromUInput();
-
-  string outputPath_ = "";
 
   // Descriptor of device we are writing to
   int outputDescriptor_ = 0;

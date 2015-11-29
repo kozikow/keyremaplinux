@@ -38,7 +38,6 @@ void InputDevice::UnGrabInputDevice() {
   
 input_event InputDevice::ReadInputEvent() {
   input_event ev;
-  LOG(INFO) << "Waiting for event for device " + inputPath_;
   CHECK(read(inputDescriptor_, &ev, sizeof(ev)) > 0);
   return ev;
 }
