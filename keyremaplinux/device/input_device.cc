@@ -16,8 +16,10 @@ namespace keyremaplinux {
 using namespace std;
 
 InputDevice::~InputDevice() {
-  UnGrabInputDevice();
-  close(inputDescriptor_);
+  if (inputDescriptor_ > 0) {
+    UnGrabInputDevice();
+    close(inputDescriptor_);
+  }
 }
 
 InputDevice::InputDevice(const string& inputPath) : inputPath_(inputPath) {

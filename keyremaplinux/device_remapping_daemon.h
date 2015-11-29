@@ -18,30 +18,15 @@ public:
   pthread_t Run();
   
 private:
-  static string FindUInputDevice();
-  
-  void EnableUInputEvents();
-
-  void CreateDeviceFromUInput();
-
   pthread_t StartRemappingThread();
 
   static void* RemappingThreadMainStub(void* data);
 
   void RemappingThreadMain();
   
-  // Outputs event that signals end of output chunk.
-  void OutputSyncEvent();
-
   DeviceRemappingDaemon(const DeviceRemappingDaemon& daemon) = delete;
 
   void operator=(const DeviceRemappingDaemon&) = delete;
-
-
-  string outputPath_ = "";
-
-  // Descriptor of device we are writing to
-  int outputDescriptor_ = 0;
 
   Remapper* remapper_ = nullptr;
   

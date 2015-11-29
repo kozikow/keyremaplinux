@@ -18,8 +18,8 @@ static const string uinputDevicePaths[] = {"/dev/input/uinput", "/dev/uinput"};
 OutputDevice::~OutputDevice() {
   if (outputDescriptor_ > 0) {
     ioctl(outputDescriptor_, UI_DEV_DESTROY);
+    close(outputDescriptor_);
   }
-  close(outputDescriptor_);
 }
 
 OutputDevice::OutputDevice() {

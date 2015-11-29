@@ -16,6 +16,7 @@ public:
   input_event ReadInputEvent();
 
 private:
+  // Grabing gives exclusive access to the device to this process.
   void GrabInputDevice();
 
   void UnGrabInputDevice();
