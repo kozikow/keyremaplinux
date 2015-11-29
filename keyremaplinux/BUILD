@@ -22,5 +22,6 @@ cc_binary(
     deps = [
       "//keyremaplinux/remapper:remapper",
       "//keyremaplinux/util:logging",
+      "//keyremaplinux/device:device",
     ],
 )

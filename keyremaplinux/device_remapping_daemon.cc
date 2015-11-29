@@ -10,6 +10,7 @@
 
 #include "device_remapping_daemon.h"
 #include "util/logging.h"
+#include "device/input_device.h"
 
 namespace keyremaplinux {
 
@@ -21,17 +22,14 @@ DeviceRemappingDaemon::~DeviceRemappingDaemon() {
   if (outputDescriptor_ > 0) {
     ioctl(outputDescriptor_, UI_DEV_DESTROY);
   }
-  ioctl(inputDescriptor_, EVIOCGRAB, (void*)0); // ungrab
   close(outputDescriptor_);
-  close(inputDescriptor_);
+  
+  delete inputDevice_;
 }
 
 DeviceRemappingDaemon::DeviceRemappingDaemon(const string& inputPath,
-    Remapper* remapper) : inputPath_(inputPath), remapper_(remapper) {
-  inputDescriptor_ = open(inputPath_.c_str(), O_RDONLY);
-  CHECK(inputDescriptor_ > 0);
-  GrabInputDevice();
-
+    Remapper* remapper) : remapper_(remapper) {
+  inputDevice_ = new InputDevice(inputPath);
   string uInputPath = FindUInputDevice();
   CHECK(uInputPath != "");
   outputDescriptor_ = open(uInputPath.c_str(), O_WRONLY | O_NONBLOCK);
@@ -51,10 +49,6 @@ string DeviceRemappingDaemon::FindUInputDevice() {
   return "";
 }
   
-void DeviceRemappingDaemon::GrabInputDevice() {
-  ioctl(inputDescriptor_, EVIOCGRAB, (void*)1);
-}
-
 void DeviceRemappingDaemon::EnableUInputEvents() {
   // Enable keys being sent.
   CHECK(!ioctl(outputDescriptor_, UI_SET_EVBIT, EV_KEY));
@@ -104,10 +98,8 @@ void* DeviceRemappingDaemon::RemappingThreadMainStub(void* deviceRemappingDaemon
 }
 
 void DeviceRemappingDaemon::RemappingThreadMain() {
-  input_event ev;
   while(true) {
-    LOG(INFO) << "Waiting for event for device " + inputPath_;
-    CHECK(read(inputDescriptor_, &ev, sizeof(ev)) > 0);
+    input_event ev = inputDevice_->ReadInputEvent();
     vector<input_event> remapped = remapper_->Remap(ev);
     for (input_event event : remapped) {
       CHECK(write(outputDescriptor_, &event, sizeof(event)) > 0);

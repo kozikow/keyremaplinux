@@ -3,28 +3,22 @@
 
 #include <string>
 
+#include "device/input_device.h"
 #include "remapper/remapper.h"
 
 namespace keyremaplinux {
 
 class DeviceRemappingDaemon {
 public:
-  DeviceRemappingDaemon(const string& path, Remapper* remapper);
+  DeviceRemappingDaemon(const string& inputPath, Remapper* remapper);
 
   virtual ~DeviceRemappingDaemon();
 
   pthread_t Run();
 
 private:
-
-  DeviceRemappingDaemon(const DeviceRemappingDaemon& daemon) = delete;
-
-  void operator=(const DeviceRemappingDaemon&) = delete;
-
   static string FindUInputDevice();
   
-  void GrabInputDevice();
-
   void EnableUInputEvents();
 
   void CreateDeviceFromUInput();
@@ -38,17 +32,19 @@ private:
   // Outputs event that signals end of output chunk.
   void OutputSyncEvent();
 
-  string inputPath_ = "";
-
   string outputPath_ = "";
-
-  // Descriptor of device we are reading from
-  int inputDescriptor_ = 0;
 
   // Descriptor of device we are writing to
   int outputDescriptor_ = 0;
 
   Remapper* remapper_ = nullptr;
+  
+  InputDevice* inputDevice_ = nullptr;
+
+  DeviceRemappingDaemon(const DeviceRemappingDaemon& daemon) = delete;
+
+  void operator=(const DeviceRemappingDaemon&) = delete;
+
 };
 
 }  // end namespace keyremaplinux
