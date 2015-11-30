@@ -28,9 +28,12 @@ private:
 
   vector<input_event> ModifierOrKeyPress(input_event event, int pressEventCode);
 
+  bool ModifierRecentlyPressed(int keyCode);
+
   static input_event KeyPressEvent(int eventCode);
 
   static void WrapInShift(vector<input_event>&);
+
 
   int modifierTimeoutMillis_;
 

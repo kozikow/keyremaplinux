@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     LOG(WARNING) << "Did not find any input devices";
   }
 
-  keyremaplinux::Remapper* remapper = new keyremaplinux::KozikowLayoutRemapper(1000);
+  keyremaplinux::Remapper* remapper = new keyremaplinux::KozikowLayoutRemapper(500);
   vector<pthread_t> threads;
   for (string device : devices) {
     LOG(INFO) << "Opening device " << device;

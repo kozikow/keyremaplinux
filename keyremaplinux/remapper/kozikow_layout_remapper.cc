@@ -91,13 +91,22 @@ vector<input_event> KozikowLayoutRemapper::ModifierOrKeyPress(input_event event,
     keyPressedSinceModifier_ = false;
   } else if (event.value == 0) {
     if (!keyPressedSinceModifier_) {
-      input_event pressEvent = KeyPressEvent(pressEventCode);
-      result.push_back(pressEvent);
-      pressEvent.value = 0; // key release
-      result.push_back(pressEvent);
+      if (ModifierRecentlyPressed(event.code)) {
+        input_event pressEvent = KeyPressEvent(pressEventCode);
+        result.push_back(pressEvent);
+        pressEvent.value = 0; // key release
+        result.push_back(pressEvent);
+      }
     }
   }
   return result;
+}
+
+bool KozikowLayoutRemapper::ModifierRecentlyPressed(int keyCode) {
+  auto elapsed = (high_resolution_clock::now() - modifierPressTime_[keyCode]);
+  milliseconds elapsedMs = duration_cast<milliseconds> (elapsed);
+  LOG(INFO) << "Elapsed duration: " << elapsedMs.count();
+  return elapsedMs.count() < modifierTimeoutMillis_;
 }
   
 input_event KozikowLayoutRemapper::LayerOnRemap(input_event event) {
