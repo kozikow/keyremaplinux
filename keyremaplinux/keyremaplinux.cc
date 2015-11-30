@@ -15,40 +15,22 @@ namespace keyremaplinux {
 
   using namespace std;
 
-  static const string dirNames[] = {"/dev/input/by-id", "/dev/input/by-path"};
+  static const string dirName = "/dev/input";
 
-  static const string keyboardSubstrings[] = {"kbd", "Keyboard"};
-
-  string ResolveSymlink(string path) {
-    char buf[PATH_MAX + 1];
-    char *res = realpath(path.c_str(), buf);
-    CHECK(res > 0);
-    return res;
-  }
-
-  bool LooksLikeKeyboardPath(string path) {
-    for (string substr : keyboardSubstrings) {
-      if (path.find(substr) != string::npos) {
-        return true;
-      }
-    }
-    return false;
-  }
+  static const string deviceSubstr = "event";
 
   set<string> FindKeyboardDevices() {
     set<string> paths;
     DIR *d;
     struct dirent *path;
-    for (string dirName : dirNames) {
-      d = opendir(dirName.c_str());
-      if (d) {
-        while ((path = readdir(d)) != NULL) {
-          if (LooksLikeKeyboardPath(path->d_name)) {
-            paths.insert(ResolveSymlink(dirName + "/" + path->d_name));
-          }
+    d = opendir(dirName.c_str());
+    if (d) {
+      while ((path = readdir(d)) != NULL) {
+        if (string(path->d_name).find(deviceSubstr) != string::npos) {
+          paths.insert(dirName + "/" + path->d_name);
         }
-        closedir(d);
       }
+      closedir(d);
     }
     return paths;
   }
