@@ -2,6 +2,7 @@
 #include <ctime>
 #include <ratio>
 #include <chrono>
+#include <vector>
 
 #include "kozikow_layout_remapper.h"
 #include "../util/logging.h"
@@ -13,6 +14,41 @@ using namespace std::chrono;
 
 KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis) :
     modifierTimeoutMillis_(modifierTimeoutMillis) {
+  for (int i=0; i<=KEY_MAX; i++) {
+    layerRemap_[i] = i;
+  }
+
+  // First row
+  layerRemap_[KEY_Q] = KEY_1;
+  layerRemap_[KEY_W] = KEY_2;
+  layerRemap_[KEY_E] = KEY_3;
+  layerRemap_[KEY_R] = KEY_4;
+  layerRemap_[KEY_T] = KEY_5;
+  layerRemap_[KEY_Y] = KEY_6;
+  layerRemap_[KEY_U] = KEY_7;
+  layerRemap_[KEY_I] = KEY_8;
+  layerRemap_[KEY_O] = KEY_9;
+  layerRemap_[KEY_P] = KEY_0;
+
+  // second row
+  layerRemap_[KEY_A] = KEY_KPLEFTPAREN;
+  layerRemap_[KEY_S] = KEY_KPRIGHTPAREN;
+  layerRemap_[KEY_D] = KEY_LEFTBRACE;
+  layerRemap_[KEY_F] = KEY_RIGHTBRACE;
+  layerRemap_[KEY_G] = KEY_GRAVE;
+  layerRemap_[KEY_H] = KEY_LEFT;
+  layerRemap_[KEY_J] = KEY_DOWN;
+  layerRemap_[KEY_K] = KEY_UP;
+  layerRemap_[KEY_L] = KEY_RIGHT;
+  layerRemap_[KEY_SEMICOLON] = KEY_EQUAL;
+  layerRemap_[KEY_APOSTROPHE] = KEY_BACKSLASH;
+
+  // Third row
+  layerRemap_[KEY_Z] = KEY_LEFTBRACE;
+  layerRemap_[KEY_X] = KEY_RIGHTBRACE;
+  layerRemap_[KEY_C] = KEY_MINUS;
+  layerRemap_[KEY_V] = KEY_KPPLUS;
+  layerRemap_[KEY_M] = KEY_MINUS;
 }
 
 vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
@@ -34,6 +70,9 @@ vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
         keyPressedSinceModifier_ = true;
         if (layerOn_) {
           result.push_back(LayerOnRemap(event));
+          if (event.code == KEY_M || event.code == KEY_D || event.code == KEY_F) {
+            WrapInShift(result);
+          }
         } else {
           result.push_back(event);
         }
@@ -54,7 +93,7 @@ vector<input_event> KozikowLayoutRemapper::ModifierOrKeyPress(input_event event,
     if (!keyPressedSinceModifier_) {
       input_event pressEvent = KeyPressEvent(pressEventCode);
       result.push_back(pressEvent);
-      pressEvent.value = 0;
+      pressEvent.value = 0; // key release
       result.push_back(pressEvent);
     }
   }
@@ -63,83 +102,15 @@ vector<input_event> KozikowLayoutRemapper::ModifierOrKeyPress(input_event event,
   
 input_event KozikowLayoutRemapper::LayerOnRemap(input_event event) {
   LOG(INFO) << "GOT CODE " << event.code;
-  switch (event.code) {
-    // First row
-    case KEY_Q:
-      event.code = KEY_1;
-      break;
-    case KEY_W:
-      event.code = KEY_2;
-      break;
-    case KEY_E:
-      event.code = KEY_3;
-      break;
-    case KEY_R:
-      event.code = KEY_4;
-      break;
-    case KEY_T:
-      event.code = KEY_5;
-      break;
-    case KEY_Y:
-      event.code = KEY_6;
-      break;
-    case KEY_U:
-      event.code = KEY_7;
-      break;
-    case KEY_I:
-      event.code = KEY_8;
-      break;
-    case KEY_O:
-      event.code = KEY_9;
-      break;
-    case KEY_P:
-      event.code = KEY_0;
-      break;
-
-    // Second row
-    case KEY_A:
-      event.code = KEY_KPLEFTPAREN;
-      break;
-    case KEY_S:
-      event.code = KEY_KPRIGHTPAREN;
-      break;
-    case KEY_G:
-      event.code = KEY_GRAVE;
-      break;
-    case KEY_H:
-      event.code = KEY_LEFT;
-      break;
-    case KEY_J:
-      event.code = KEY_DOWN;
-      break;
-    case KEY_K:
-      event.code = KEY_UP;
-      break;
-    case KEY_L:
-      event.code = KEY_RIGHT;
-      break;
-    case KEY_SEMICOLON:
-      event.code = KEY_EQUAL;
-      break;
-    case KEY_APOSTROPHE:
-      event.code = KEY_BACKSLASH;
-      break;
-
-    // Third row
-    case KEY_Z:
-      event.code = KEY_LEFTBRACE;
-      break;
-    case KEY_X:
-      event.code = KEY_RIGHTBRACE;
-      break;
-    case KEY_C:
-      event.code = KEY_MINUS;
-      break;
-    case KEY_V:
-      event.code = KEY_KPPLUS;
-      break;
-  }
+  event.code = layerRemap_[event.code];
   return event;
+}
+
+void KozikowLayoutRemapper::WrapInShift(vector<input_event>& events) {
+  input_event shiftEvent = KeyPressEvent(KEY_LEFTSHIFT);
+  events.insert(events.begin(), shiftEvent);
+  shiftEvent.value = 0; // key release
+  events.push_back(shiftEvent);
 }
   
 input_event KozikowLayoutRemapper::KeyPressEvent(int eventCode) {

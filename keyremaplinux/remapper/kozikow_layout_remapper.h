@@ -6,6 +6,7 @@
 #include <chrono>
 #include <map>
 #include <string.h>
+#include <vector>
 
 #include "remapper.h"
 
@@ -29,13 +30,17 @@ private:
 
   static input_event KeyPressEvent(int eventCode);
 
+  static void WrapInShift(vector<input_event>&);
+
   int modifierTimeoutMillis_;
 
   bool layerOn_ = false;
 
   bool keyPressedSinceModifier_ = false;
   
-  map<int, high_resolution_clock::time_point> modifierPressTime_;
+  high_resolution_clock::time_point modifierPressTime_[KEY_MAX];
+
+  int layerRemap_[KEY_MAX+1];
 };
 
 }  // end namespace keyremaplinux
