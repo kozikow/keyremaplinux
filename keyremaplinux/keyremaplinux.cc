@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <string>
 #include <dirent.h> 
+#include <limits.h>
+#include <set>
 
 #include "keyremaplinux/remapper/remapper.h"
 #include "keyremaplinux/remapper/kozikow_layout_remapper.h"
@@ -13,38 +15,57 @@ namespace keyremaplinux {
 
   using namespace std;
 
-  static const string deviceRoot = "/dev/input/by-path";
+  static const string dirNames[] = {"/dev/input/by-id", "/dev/input/by-path"};
 
-  static const string keyboardSubstr = "event-kbd";
+  static const string keyboardSubstrings[] = {"kbd", "Keyboard"};
 
-  vector<string> FindKeyboardDevices() {
-    vector<string> result;
-    DIR *d;
-    struct dirent *dir;
-    d = opendir(deviceRoot.c_str());
-    if (d) {
-      while ((dir = readdir(d)) != NULL) {
-        if (((string)dir->d_name).find(keyboardSubstr) != string::npos) {
-          result.push_back(deviceRoot + "/" + dir->d_name);
-        }
+  string ResolveSymlink(string path) {
+    char buf[PATH_MAX + 1];
+    char *res = realpath(path.c_str(), buf);
+    CHECK(res > 0);
+    return res;
+  }
+
+  bool LooksLikeKeyboardPath(string path) {
+    for (string substr : keyboardSubstrings) {
+      if (path.find(substr) != string::npos) {
+        return true;
       }
-      closedir(d);
     }
-    return result;
+    return false;
+  }
+
+  set<string> FindKeyboardDevices() {
+    set<string> paths;
+    DIR *d;
+    struct dirent *path;
+    for (string dirName : dirNames) {
+      d = opendir(dirName.c_str());
+      if (d) {
+        while ((path = readdir(d)) != NULL) {
+          if (LooksLikeKeyboardPath(path->d_name)) {
+            paths.insert(ResolveSymlink(dirName + "/" + path->d_name));
+          }
+        }
+        closedir(d);
+      }
+    }
+    return paths;
   }
 
 }  // end namespace keyremaplinux
 
 int main(int argc, char* argv[]) {
   using namespace std;
-  vector<string> devices = keyremaplinux::FindKeyboardDevices();
+  set<string> devices = keyremaplinux::FindKeyboardDevices();
   if (devices.empty()) {
     LOG(WARNING) << "Did not find any input devices";
   }
 
   keyremaplinux::Remapper* remapper = new keyremaplinux::KozikowLayoutRemapper();
   vector<pthread_t> threads;
-  for (auto device : devices) {
+  for (string device : devices) {
+    LOG(INFO) << "Opening device " << device;
     keyremaplinux::DeviceRemappingDaemon* daemon =
         new keyremaplinux::DeviceRemappingDaemon(device, remapper);
     pthread_t thread = daemon->Run();
