@@ -11,6 +11,10 @@ namespace keyremaplinux {
 using namespace std;
 using namespace std::chrono;
 
+KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis) :
+    modifierTimeoutMillis_(modifierTimeoutMillis) {
+}
+
 vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
   vector<input_event> result;
   LOG(INFO) << "Got event type: " << event.type << ' ' <<
@@ -60,24 +64,7 @@ vector<input_event> KozikowLayoutRemapper::ModifierOrKeyPress(input_event event,
 input_event KozikowLayoutRemapper::LayerOnRemap(input_event event) {
   LOG(INFO) << "GOT CODE " << event.code;
   switch (event.code) {
-    case KEY_A:
-      event.code = KEY_KPLEFTPAREN;
-      break;
-    case KEY_H:
-      event.code = KEY_LEFT;
-      break;
-    case KEY_J:
-      event.code = KEY_DOWN;
-      break;
-    case KEY_K:
-      event.code = KEY_UP;
-      break;
-    case KEY_L:
-      event.code = KEY_RIGHT;
-      break;
-    case KEY_SEMICOLON:
-      event.code = KEY_EQUAL;
-      break;
+    // First row
     case KEY_Q:
       event.code = KEY_1;
       break;
@@ -107,6 +94,49 @@ input_event KozikowLayoutRemapper::LayerOnRemap(input_event event) {
       break;
     case KEY_P:
       event.code = KEY_0;
+      break;
+
+    // Second row
+    case KEY_A:
+      event.code = KEY_KPLEFTPAREN;
+      break;
+    case KEY_S:
+      event.code = KEY_KPRIGHTPAREN;
+      break;
+    case KEY_G:
+      event.code = KEY_GRAVE;
+      break;
+    case KEY_H:
+      event.code = KEY_LEFT;
+      break;
+    case KEY_J:
+      event.code = KEY_DOWN;
+      break;
+    case KEY_K:
+      event.code = KEY_UP;
+      break;
+    case KEY_L:
+      event.code = KEY_RIGHT;
+      break;
+    case KEY_SEMICOLON:
+      event.code = KEY_EQUAL;
+      break;
+    case KEY_APOSTROPHE:
+      event.code = KEY_BACKSLASH;
+      break;
+
+    // Third row
+    case KEY_Z:
+      event.code = KEY_LEFTBRACE;
+      break;
+    case KEY_X:
+      event.code = KEY_RIGHTBRACE;
+      break;
+    case KEY_C:
+      event.code = KEY_MINUS;
+      break;
+    case KEY_V:
+      event.code = KEY_KPPLUS;
       break;
   }
   return event;

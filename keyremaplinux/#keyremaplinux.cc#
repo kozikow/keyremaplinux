@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     pthread_t thread = daemon->Run();
     threads.push_back(thread);
   }
-
+   
   LOG(INFO) << "Waiting for threads";
   for (pthread_t thread : threads) {
     CHECK(!pthread_join(thread, nullptr));

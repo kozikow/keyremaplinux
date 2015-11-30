@@ -16,7 +16,7 @@ using namespace std::chrono;
 
 class KozikowLayoutRemapper : public Remapper {
 public:
-  using Remapper::Remapper;
+  KozikowLayoutRemapper(int modifierTimeoutMillis);
 
   virtual ~KozikowLayoutRemapper() {};
 
@@ -28,6 +28,8 @@ private:
   vector<input_event> ModifierOrKeyPress(input_event event, int pressEventCode);
 
   static input_event KeyPressEvent(int eventCode);
+
+  int modifierTimeoutMillis_;
 
   bool layerOn_ = false;
 
