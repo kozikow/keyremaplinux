@@ -1,15 +1,14 @@
 #ifndef KEYREMAPLINUX_DEVICE_INPUT_DEVICE
 #define KEYREMAPLINUX_DEVICE_INPUT_DEVICE
 
+#include <linux/input.h>
 #include <string>
 
 namespace keyremaplinux {
   
-using namespace std;
-
 class InputDevice {
 public:
-  InputDevice(const string& path);
+  InputDevice(const std::string& path);
 
   virtual ~InputDevice();
 
@@ -21,7 +20,7 @@ private:
 
   void UnGrabInputDevice();
 
-  string inputPath_ = "";
+std::string inputPath_ = "";
 
   // Descriptor of the device we are reading from.
   int inputDescriptor_ = 0;

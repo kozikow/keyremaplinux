@@ -1,4 +1,5 @@
 #include "logging.h"
+
 #define LOG_MIN_LEVEL WARNING
 
 namespace keyremaplinux {

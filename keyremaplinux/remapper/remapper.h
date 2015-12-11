@@ -1,12 +1,10 @@
 #ifndef KEYREMAPLINUX_REMAPPER_REMAPPER
 #define KEYREMAPLINUX_REMAPPER_REMAPPER
 
-#include <vector>
 #include <linux/input.h>
+#include <vector>
 
 namespace keyremaplinux {
-
-using namespace std;
 
 class Remapper {
 public:
@@ -14,7 +12,7 @@ public:
 
   virtual ~Remapper() {};
 
-  virtual vector<input_event> Remap(input_event event) = 0;
+  virtual std::vector<input_event> Remap(input_event event) = 0;
 
 private:
 

@@ -1,23 +1,22 @@
-#include <string>
+#include "device_remapping_daemon.h"
 
 #include <linux/input.h>
 #include <pthread.h>
+#include <string>
 
-#include "device_remapping_daemon.h"
-#include "util/logging.h"
-#include "device/input_device.h"
-#include "device/output_device.h"
+#include "keyremaplinux/device/input_device.h"
+#include "keyremaplinux/device/output_device.h"
+#include "keyremaplinux/util/logging.h"
+
 
 namespace keyremaplinux {
-
-using namespace std;
 
 DeviceRemappingDaemon::~DeviceRemappingDaemon() {
   delete inputDevice_;
   delete outputDevice_;
 }
 
-DeviceRemappingDaemon::DeviceRemappingDaemon(const string& inputPath,
+DeviceRemappingDaemon::DeviceRemappingDaemon(const std::string& inputPath,
     Remapper* remapper) : remapper_(remapper) {
   inputDevice_ = new InputDevice(inputPath);
   outputDevice_ = new OutputDevice();
@@ -43,7 +42,7 @@ void* DeviceRemappingDaemon::RemappingThreadMainStub(void* deviceRemappingDaemon
 void DeviceRemappingDaemon::RemappingThreadMain() {
   while(true) {
     input_event ev = inputDevice_->ReadInputEvent();
-    vector<input_event> remapped = remapper_->Remap(ev);
+    std::vector<input_event> remapped = remapper_->Remap(ev);
     for (input_event event : remapped) {
       outputDevice_->WriteInputEvent(event);
     }

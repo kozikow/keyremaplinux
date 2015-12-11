@@ -1,9 +1,9 @@
-#include <iostream>
-#include <vector>
 #include <cstdio>
-#include <string>
 #include <dirent.h> 
 #include <limits.h>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include "keyremaplinux/remapper/remapper.h"
 #include "keyremaplinux/remapper/kozikow_layout_remapper.h"
@@ -12,14 +12,12 @@
 
 namespace keyremaplinux {
 
-  using namespace std;
+  static const std::string dirName = "/dev/input";
 
-  static const string dirName = "/dev/input";
+  static const std::string devicesCmd = (std::string) "cat /proc/bus/input/" +
+      "devices | grep Handlers | grep kbd | grep -o \"event[0-9]*\"";
 
-  static const string devicesCmd = (string) "cat /proc/bus/input/devices | " +
-      " grep Handlers | grep kbd | grep -o \"event[0-9]*\"";
-
-  vector<string> FindKeyboardDevices() {
+  std::vector<std::string> FindKeyboardDevices() {
     // Finds list of keyboards based on contests of the /proc/bus/input/devices.
     // It's a bit hacky, as it relies on parsing text format.
     // Sadly, a few other ways didn't work. Those include:
@@ -31,7 +29,7 @@ namespace keyremaplinux {
     CHECK(fp != NULL);
 
     char fileName[NAME_MAX+1];
-    vector<string> fileNames;
+    std::vector<std::string> fileNames;
     while(fscanf(fp, "%s", fileName) > 0) {
       fileNames.push_back(dirName + "/" + fileName);
     }
@@ -41,15 +39,14 @@ namespace keyremaplinux {
 }  // end namespace keyremaplinux
 
 int main(int argc, char* argv[]) {
-  using namespace std;
-  vector<string> devices = keyremaplinux::FindKeyboardDevices();
+  std::vector<std::string> devices = keyremaplinux::FindKeyboardDevices();
   if (devices.empty()) {
     LOG(WARNING) << "Did not find any input devices";
   }
 
   keyremaplinux::Remapper* remapper = new keyremaplinux::KozikowLayoutRemapper(500);
-  vector<pthread_t> threads;
-  for (string device : devices) {
+  std::vector<pthread_t> threads;
+  for (std::string device : devices) {
     LOG(INFO) << "Opening device " << device;
     keyremaplinux::DeviceRemappingDaemon* daemon =
         new keyremaplinux::DeviceRemappingDaemon(device, remapper);

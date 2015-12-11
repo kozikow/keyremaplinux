@@ -1,20 +1,18 @@
-#include <string.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <fcntl.h>
+#include "output_device.h"
 
+#include <fcntl.h>
 #include <linux/input.h>
 #include <linux/uinput.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
 
-#include "../util/logging.h"
-#include "output_device.h"
+#include "keyremaplinux/util/logging.h"
 
 namespace keyremaplinux {
 
-using namespace std;
-
 // Dependent on the OS.
-static const string uinputDevicePaths[] = {"/dev/input/uinput", "/dev/uinput"};
+static const std::string uinputDevicePaths[] = {"/dev/input/uinput", "/dev/uinput"};
 
 OutputDevice::~OutputDevice() {
   if (outputDescriptor_ > 0) {
@@ -26,7 +24,7 @@ OutputDevice::~OutputDevice() {
 OutputDevice::OutputDevice() {
   // uInput device is used to create actual device we will be writing to.
   // See http://thiemonge.org/getting-started-with-uinput
-  string uInputPath = FindUInputDevice();
+  auto uInputPath = FindUInputDevice();
   CHECK(uInputPath != "");
   outputDescriptor_ = open(uInputPath.c_str(), O_WRONLY | O_NONBLOCK);
   CHECK(outputDescriptor_ > 0);
@@ -36,8 +34,8 @@ OutputDevice::OutputDevice() {
   CHECK(outputDescriptor_ > 0);
 }
 
-string OutputDevice::FindUInputDevice() {
-  for (string path : uinputDevicePaths) {
+std::string OutputDevice::FindUInputDevice() {
+  for (auto path : uinputDevicePaths) {
     if (access(path.c_str(), F_OK) != -1) {
       return path;
     }

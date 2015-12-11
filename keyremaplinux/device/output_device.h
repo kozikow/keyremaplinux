@@ -1,12 +1,11 @@
 #ifndef KEYREMAPLINUX_DEVICE_OUTPUT_DEVICE
 #define KEYREMAPLINUX_DEVICE_OUTPUT_DEVICE
 
+#include <linux/input.h>
 #include <string>
 
 namespace keyremaplinux {
   
-using namespace std;
-
 // Actual device we will be writing to is created using the uInput system.
 // See http://thiemonge.org/getting-started-with-uinput
 class OutputDevice {
@@ -21,7 +20,7 @@ public:
   void WriteSyncEvent();
 
 private:
-  static string FindUInputDevice();
+  static std::string FindUInputDevice();
   
   void EnableUInputEvents();
 

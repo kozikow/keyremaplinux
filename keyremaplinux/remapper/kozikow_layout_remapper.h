@@ -1,19 +1,15 @@
 #ifndef KEYREMAPLINUX_REMAPPER_KOZIKOW_LAYOUT_REMAPPER
 #define KEYREMAPLINUX_REMAPPER_KOZIKOW_LAYOUT_REMAPPER
 
-#include <vector>
-#include <linux/input.h>
 #include <chrono>
-#include <map>
+#include <linux/input.h>
 #include <string.h>
+#include <map>
 #include <vector>
 
 #include "remapper.h"
 
 namespace keyremaplinux {
-
-using namespace std;
-using namespace std::chrono;
 
 class KozikowLayoutRemapper : public Remapper {
 public:
@@ -26,13 +22,13 @@ public:
 private:
   input_event LayerOnRemap(input_event event);
 
-  vector<input_event> ModifierOrKeyPress(input_event event, int pressEventCode);
+  std::vector<input_event> ModifierOrKeyPress(input_event event, int pressEventCode);
 
   bool ModifierRecentlyPressed(int keyCode);
 
   static input_event KeyPressEvent(int eventCode);
 
-  static void WrapInShift(vector<input_event>&);
+  static void WrapInShift(std::vector<input_event>&);
 
 
   int modifierTimeoutMillis_;
@@ -41,7 +37,7 @@ private:
 
   bool keyPressedSinceModifier_ = false;
   
-  high_resolution_clock::time_point modifierPressTime_[KEY_MAX];
+  std::chrono::high_resolution_clock::time_point modifierPressTime_[KEY_MAX];
 
   int layerRemap_[KEY_MAX+1];
 };

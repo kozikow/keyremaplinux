@@ -1,19 +1,16 @@
-#include <string>
+#include "input_device.h"
 
 #include <linux/input.h>
 #include <linux/uinput.h>
-#include <sys/fcntl.h>
-#include <unistd.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <sys/fcntl.h>
+#include <unistd.h>
 #include <string>
 
-#include "input_device.h"
-#include "../util/logging.h"
+#include "keyremaplinux/util/logging.h"
 
 namespace keyremaplinux {
-
-using namespace std;
 
 InputDevice::~InputDevice() {
   if (inputDescriptor_ > 0) {
@@ -22,7 +19,7 @@ InputDevice::~InputDevice() {
   }
 }
 
-InputDevice::InputDevice(const string& inputPath) : inputPath_(inputPath) {
+InputDevice::InputDevice(const std::string& inputPath) : inputPath_(inputPath) {
   inputDescriptor_ = open(inputPath_.c_str(), O_RDONLY);
   CHECK(inputDescriptor_ > 0);
   GrabInputDevice();

@@ -11,7 +11,7 @@ cc_library(
         "kozikow_layout_remapper.h",
     ],
     srcs = [
-         "kozikow_layout_remapper.cc"
+        "kozikow_layout_remapper.cc"
     ],
     deps = [
       "//keyremaplinux/util:logging",

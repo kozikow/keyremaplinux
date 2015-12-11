@@ -11,7 +11,7 @@ namespace keyremaplinux {
 
 class DeviceRemappingDaemon {
 public:
-  DeviceRemappingDaemon(const string& inputPath, Remapper* remapper);
+  DeviceRemappingDaemon(const std::string& inputPath, Remapper* remapper);
 
   virtual ~DeviceRemappingDaemon();
 

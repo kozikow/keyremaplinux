@@ -1,16 +1,13 @@
+#include "kozikow_layout_remapper.h"
+
 #include <chrono>
 #include <ctime>
 #include <ratio>
-#include <chrono>
 #include <vector>
 
-#include "kozikow_layout_remapper.h"
-#include "../util/logging.h"
+#include "keyremaplinux/util/logging.h"
 
 namespace keyremaplinux {
-
-using namespace std;
-using namespace std::chrono;
 
 KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis) :
     modifierTimeoutMillis_(modifierTimeoutMillis) {
@@ -51,8 +48,8 @@ KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis) :
   layerRemap_[KEY_M] = KEY_MINUS;
 }
 
-vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
-  vector<input_event> result;
+std::vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
+  std::vector<input_event> result;
   LOG(INFO) << "Got event type: " << event.type << ' ' <<
       " code: " << event.code << " value: " << event.value;
   if (event.type == EV_KEY) {
@@ -81,13 +78,13 @@ vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
   return result;
 }
   
-vector<input_event> KozikowLayoutRemapper::ModifierOrKeyPress(input_event event, 
+std::vector<input_event> KozikowLayoutRemapper::ModifierOrKeyPress(input_event event, 
     int pressEventCode) {
-  vector<input_event> result;
+  std::vector<input_event> result;
   result.push_back(event);
   if (event.value == 1) {
     LOG(INFO) << "Pressing " << event.code;
-    modifierPressTime_[event.code] = high_resolution_clock::now();
+    modifierPressTime_[event.code] = std::chrono::high_resolution_clock::now();
     keyPressedSinceModifier_ = false;
   } else if (event.value == 0) {
     if (!keyPressedSinceModifier_) {
@@ -103,8 +100,9 @@ vector<input_event> KozikowLayoutRemapper::ModifierOrKeyPress(input_event event,
 }
 
 bool KozikowLayoutRemapper::ModifierRecentlyPressed(int keyCode) {
-  auto elapsed = (high_resolution_clock::now() - modifierPressTime_[keyCode]);
-  milliseconds elapsedMs = duration_cast<milliseconds> (elapsed);
+  auto elapsed = (std::chrono::high_resolution_clock::now() -
+      modifierPressTime_[keyCode]);
+  std::chrono::milliseconds elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds> (elapsed);
   LOG(INFO) << "Elapsed duration: " << elapsedMs.count();
   return elapsedMs.count() < modifierTimeoutMillis_;
 }
@@ -115,7 +113,7 @@ input_event KozikowLayoutRemapper::LayerOnRemap(input_event event) {
   return event;
 }
 
-void KozikowLayoutRemapper::WrapInShift(vector<input_event>& events) {
+void KozikowLayoutRemapper::WrapInShift(std::vector<input_event>& events) {
   input_event shiftEvent = KeyPressEvent(KEY_LEFTSHIFT);
   events.insert(events.begin(), shiftEvent);
   shiftEvent.value = 0; // key release
