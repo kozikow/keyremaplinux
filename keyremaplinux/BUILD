@@ -18,6 +18,10 @@ cc_binary(
       "device_remapping_daemon.h",
       "keyremaplinux.cc",
     ],
+    copts = [
+        "-std=c++11",
+        "-O2",
+    ],
     linkopts = ["-pthread"],
     deps = [
       "//keyremaplinux/remapper:remapper",
