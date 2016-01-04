@@ -3,6 +3,11 @@ Work in progress.
 
 Define your keyboard layout as C++ class.
 
+To test:
+```
+bazel test //keyremaplinux:all --test_output=errors
+```
+
 To run on linux:
 ```
 sudo kill -9 $(ps aux | grep [k]eyremaplinux | awk '{print $2}')
