@@ -2,6 +2,7 @@
 Work in progress.
 
 Define your keyboard layout as C++ class.
+Primarily focused on implementing my keyboard layout described in https://kozikow.wordpress.com/2013/11/15/the-only-alternative-keyboard-layout-youll-ever-need-as-a-programmer/.
 
 To test:
 ```
