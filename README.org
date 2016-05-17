@@ -48,9 +48,10 @@ Primarily focused on implementing [[https://kozikow.wordpress.com/2013/11/15/the
 2. For example [[https://github.com/kozikow/keyremaplinux/blob/master/keyremaplinux/remapper/kozikow_layout_remapper.h][KozikowLayoutRemapper]]
 3. Consume and produce [[https://github.com/torvalds/linux/blob/master/include/uapi/linux/input.h#L25][Linux input event from input.h]]
 4. [[https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h][Event codes are defined in input-event-codes.h]]
-
+** Implementation tips
+*** Finding out the event code
 Rather than reading trying to come up with correct event code based on input-event-codes,
-I recommend that you would break point or add logging in your layout to see correct codes. 
+I recommend that you would break point or add logging in your layout to see correct codes.
 Sometimes name of key may surprise you.
 * Run tests
 #+BEGIN_SRC bash
