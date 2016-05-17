@@ -20,15 +20,8 @@
 <li><a href="#orgheadline8">3.2. Start bazel with extra paramenters for higher cpu priority</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline14">4. Implementing the new layout</a>
-<ul>
-<li><a href="#orgheadline10">4.1. Extend Remapper</a></li>
-<li><a href="#orgheadline11">4.2. For example KozikowLayoutRemapper</a></li>
-<li><a href="#orgheadline12">4.3. Consume and produce Linux input<sub>event</sub> from input.h</a></li>
-<li><a href="#orgheadline13">4.4. Event codes are defined in input-event-codes.h</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline15">5. Run tests</a></li>
+<li><a href="#orgheadline10">4. Implementing the new layout</a></li>
+<li><a href="#orgheadline11">5. Run tests</a></li>
 </ul>
 </div>
 </div>
@@ -83,21 +76,17 @@ Primarily focused on implementing [my keyboard layout](https://kozikow.wordpress
 
     sudo nice -n -20 ./bazel-bin/keyremaplinux/keyremaplinux
 
-# Implementing the new layout<a id="orgheadline14"></a>
+# Implementing the new layout<a id="orgheadline10"></a>
 
-## Extend [Remapper](https://github.com/kozikow/keyremaplinux/blob/master/keyremaplinux/remapper/remapper.h)<a id="orgheadline10"></a>
+1.  Extend [Remapper](https://github.com/kozikow/keyremaplinux/blob/master/keyremaplinux/remapper/remapper.h)
+2.  For example [KozikowLayoutRemapper](https://github.com/kozikow/keyremaplinux/blob/master/keyremaplinux/remapper/kozikow_layout_remapper.h)
+3.  Consume and produce [Linux input event from input.h](https://github.com/torvalds/linux/blob/master/include/uapi/linux/input.h#L25)
+4.  [Event codes are defined in input-event-codes.h](https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h)
 
-## For example [KozikowLayoutRemapper](https://github.com/kozikow/keyremaplinux/blob/master/keyremaplinux/remapper/kozikow_layout_remapper.h)<a id="orgheadline11"></a>
-
-## Consume and produce [Linux input<sub>event</sub> from input.h](https://github.com/torvalds/linux/blob/master/include/uapi/linux/input.h#L25)<a id="orgheadline12"></a>
-
-## [Event codes are defined in input-event-codes.h](https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h)<a id="orgheadline13"></a>
-
-Rather than reading trying to come up with mapping based on this file,
-I recommend break pointing or adding logging in your layout to see correct codes.
-
+Rather than reading trying to come up with correct event code based on input-event-codes,
+I recommend that you would break point or add logging in your layout to see correct codes. 
 Sometimes name of key may surprise you.
 
-# Run tests<a id="orgheadline15"></a>
+# Run tests<a id="orgheadline11"></a>
 
     bazel test //keyremaplinux:all --test_output=errors
