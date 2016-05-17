@@ -1,0 +1,50 @@
+* Introduction
+Define your keyboard layout as C++ class.
+Primarily focused on implementing [[https://kozikow.wordpress.com/2013/11/15/the-only-alternative-keyboard-layout-youll-ever-need-as-a-programmer/][my keyboard layout]].
+* Running on Linux
+** Kill existing bazel
+#+BEGIN_SRC bash
+  sudo kill -9 $(ps aux | grep [k]eyremaplinux | awk '{print $2}')
+#+END_SRC
+** Start bazel with extra paramenters for higher cpu priority
+#+BEGIN_SRC bash
+  sudo nice -n -20 ./bazel-bin/keyremaplinux/keyremaplinux 
+#+END_SRC
+* Installation
+** Install bazel
+*** Mac OS X
+#+BEGIN_SRC bash
+  brew install bazel
+#+END_SRC
+*** From source
+#+BEGIN_SRC bash
+  apt-get install -y software-properties-common python-software-properties
+
+  # C++
+  apt-get install -y g++
+
+  # Java 8
+  echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+  add-apt-repository -y ppa:webupd8team/java
+  sudo apt-get update
+  apt-get install -y oracle-java8-installer
+
+  # Bazel dependencies
+  apt-get install -y pkg-config zip zlib1g-dev unzip git
+
+  # Build bazel
+  git clone https://github.com/google/bazel.git ~/bazel && cd ~/bazel
+  ~/bazel/compile.sh
+  sudo cp ~/bazel/bazel-bin/src/bazel /usr/local/bin
+#+END_SRC
+** Build keyremaplinux
+#+BEGIN_SRC bash
+  git clone https://github.com/kozikow/keyremaplinux ~/keyremaplinux
+  cd ~/keyremaplinux
+  bazel build //keyremaplinux:keyremaplinux
+#+END_SRC
+* Run tests
+#+BEGIN_SRC bash
+  bazel test //keyremaplinux:all --test_output=errors
+#+END_SRC
+
