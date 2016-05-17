@@ -33,3 +33,9 @@ bazel-*
 *.exe
 *.out
 *.app
+
+# Tags
+GPATH
+GRTAGS
+GTAGS
+
