@@ -3,7 +3,7 @@ Define your keyboard layout as C++ class.
 Primarily focused on implementing [[https://kozikow.wordpress.com/2013/11/15/the-only-alternative-keyboard-layout-youll-ever-need-as-a-programmer/][my keyboard layout]].
 * Installation
 ** Install bazel
-*** Build from source
+*** [[http://bazel.io/docs/install.html][Build from source on ubuntu]]
 #+BEGIN_SRC bash
   apt-get install -y software-properties-common python-software-properties
 
