@@ -50,8 +50,6 @@ KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis, Keyboard
 
 std::vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
   std::vector<input_event> result;
-  LOG(ERROR) << "Got event type: " << event.type << ' ' <<
-      " code: " << event.code << " value: " << event.value;
   if (event.type == EV_KEY) {
     switch (event.code) {
       case KEY_RIGHTMETA:
