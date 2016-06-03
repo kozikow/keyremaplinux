@@ -8,12 +8,13 @@
 #include <vector>
 
 #include "remapper.h"
+#include "keyboard_type.h"
 
 namespace keyremaplinux {
 
 class KozikowLayoutRemapper : public Remapper {
 public:
-  KozikowLayoutRemapper(int modifierTimeoutMillis);
+  KozikowLayoutRemapper(int modifierTimeoutMillis, KeyboardType keyboardType);
 
   virtual ~KozikowLayoutRemapper() {};
 
@@ -33,6 +34,8 @@ private:
 
   int modifierTimeoutMillis_;
 
+  KeyboardType keyboardType_;
+
   bool layerOn_ = false;
 
   bool keyPressedSinceModifier_ = false;
@@ -43,5 +46,4 @@ private:
 };
 
 }  // end namespace keyremaplinux
-
 #endif  // KEYREMAPLINUX_REMAPPER_KOZIKOW_LAYOUT_REMAPPER

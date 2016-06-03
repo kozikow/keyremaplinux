@@ -8,6 +8,7 @@ cc_library(
     name = "remapper",
     hdrs = [
         "remapper.h",
+        "keyboard_type.h",
         "kozikow_layout_remapper.h",
     ],
     srcs = [

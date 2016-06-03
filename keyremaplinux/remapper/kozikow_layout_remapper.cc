@@ -9,8 +9,8 @@
 
 namespace keyremaplinux {
 
-KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis) :
-    modifierTimeoutMillis_(modifierTimeoutMillis) {
+KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis, KeyboardType keyboardType) :
+  modifierTimeoutMillis_(modifierTimeoutMillis), keyboardType_(keyboardType) {
   for (int i=0; i<=KEY_MAX; i++) {
     layerRemap_[i] = i;
   }
@@ -50,12 +50,31 @@ KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis) :
 
 std::vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
   std::vector<input_event> result;
-  LOG(INFO) << "Got event type: " << event.type << ' ' <<
+  LOG(ERROR) << "Got event type: " << event.type << ' ' <<
       " code: " << event.code << " value: " << event.value;
   if (event.type == EV_KEY) {
     switch (event.code) {
       case KEY_RIGHTMETA:
-        layerOn_ = event.value;
+        if (keyboardType_ == mac) {
+            layerOn_ = event.value;
+            return result;
+        }
+      case KEY_RIGHTALT:
+        if (keyboardType_ == standard) {
+            layerOn_ = event.value;
+            return result;
+        }
+      case KEY_LEFTALT:
+        if (keyboardType_ == standard) {
+          event.code = KEY_LEFTMETA;
+        }
+        result.push_back(event);
+        return result;
+      case KEY_LEFTMETA:
+        if (keyboardType_ == standard) {
+          event.code = KEY_LEFTALT;
+        }
+        result.push_back(event);
         return result;
       case KEY_CAPSLOCK:
         event.code = KEY_LEFTCTRL;

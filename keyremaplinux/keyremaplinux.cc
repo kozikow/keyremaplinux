@@ -7,6 +7,7 @@
 
 #include "keyremaplinux/remapper/remapper.h"
 #include "keyremaplinux/remapper/kozikow_layout_remapper.h"
+#include "keyremaplinux/remapper/keyboard_type.h"
 #include "device_remapping_daemon.h"
 #include "util/logging.h"
 
@@ -44,7 +45,16 @@ int main(int argc, char* argv[]) {
     LOG(WARNING) << "Did not find any input devices";
   }
 
-  keyremaplinux::Remapper* remapper = new keyremaplinux::KozikowLayoutRemapper(500);
+  std::string layoutName(argv[1]);
+  keyremaplinux::Remapper* remapper;
+  if (layoutName == "kozikow_standard") {
+    remapper = new keyremaplinux::KozikowLayoutRemapper(500, keyremaplinux::standard);
+  } else if (layoutName == "kozikow_mac") {
+    remapper = new keyremaplinux::KozikowLayoutRemapper(500, keyremaplinux::mac);
+  } else {
+    throw "Unrecognized layout " + layoutName;
+  }
+
   std::vector<pthread_t> threads;
   for (std::string device : devices) {
     LOG(INFO) << "Opening device " << device;
