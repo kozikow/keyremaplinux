@@ -3,7 +3,7 @@ Define your keyboard layout as C++ class.
 Primarily focused on implementing [[https://kozikow.wordpress.com/2013/11/15/the-only-alternative-keyboard-layout-youll-ever-need-as-a-programmer/][my keyboard layout]].
 * Why use it instead of xmodmap/xcape
 - Just single representation for a key to deal with - input_event code from [[https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h][input_event_codes.h]]. No need to distinguish between scancode, keysym or keycode.
-- For complex layouts, xmodmap/xcape gets complex: https://github.com/kozikow/kozikow-layout-linux.
+- For complex layouts, xmodmap/xcape gets hard to maintain: https://github.com/kozikow/kozikow-layout-linux.
 - Thread per keyboard lets you have different layout per keyboard.
 - Unit test your layout.
 * Installation
