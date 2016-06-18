@@ -91,6 +91,9 @@ std::vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
           result.push_back(event);
         }
     }
+  } else {
+    // Only EV_KEY events are relevant. Forward other events.
+    result.push_back(event);
   }
   return result;
 }
