@@ -29,9 +29,12 @@ private:
   // Descriptor of device we are writing to
   int outputDescriptor_ = 0;
 
+  struct input_event *syncEvent_;
+
   OutputDevice(const OutputDevice& daemon) = delete;
 
   void operator=(const OutputDevice&) = delete;
+
 
 };
 

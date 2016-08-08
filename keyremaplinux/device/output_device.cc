@@ -32,6 +32,14 @@ OutputDevice::OutputDevice() {
   EnableUInputEvents();
   CreateDeviceFromUInput();
   CHECK(outputDescriptor_ > 0);
+
+  // Initialize syncEvent_
+  struct input_event ev;
+  syncEvent_ = (input_event*) malloc(sizeof(ev));
+  memset(syncEvent_, 0, sizeof(ev));
+  syncEvent_->type = EV_SYN;
+  syncEvent_->code = 0;
+  syncEvent_->value = 0;
 }
 
 std::string OutputDevice::FindUInputDevice() {
@@ -77,12 +85,7 @@ void OutputDevice::WriteInputEvent(input_event event) {
 }
 
 void OutputDevice::WriteSyncEvent() {
-  struct input_event ev;
-  memset(&ev, 0, sizeof(ev));
-  ev.type = EV_SYN;
-  ev.code = 0;
-  ev.value = 0;
-  CHECK(write(outputDescriptor_, &ev, sizeof(ev)) >= 0);
+  CHECK(write(outputDescriptor_, syncEvent_, sizeof(*syncEvent_)) >= 0);
 }
   
 }  // end namespace keyremaplinux
