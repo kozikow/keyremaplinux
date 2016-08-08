@@ -41,9 +41,9 @@ void* DeviceRemappingDaemon::RemappingThreadMainStub(void* deviceRemappingDaemon
 
 void DeviceRemappingDaemon::RemappingThreadMain() {
   while(true) {
-    input_event ev = inputDevice_->ReadInputEvent();
-    std::vector<input_event> remapped = remapper_->Remap(ev);
-    for (input_event event : remapped) {
+    input_event* ev = inputDevice_->ReadInputEvent();
+    std::vector<input_event*> remapped = remapper_->Remap(ev);
+    for (input_event* event : remapped) {
       outputDevice_->WriteInputEvent(event);
     }
     if (remapped.size() > 0) {

@@ -12,7 +12,7 @@ public:
 
   virtual ~InputDevice();
 
-  input_event ReadInputEvent();
+  input_event* ReadInputEvent();
 
 private:
   // Grabing gives exclusive access to the device to this process.
@@ -24,6 +24,8 @@ std::string inputPath_ = "";
 
   // Descriptor of the device we are reading from.
   int inputDescriptor_ = 0;
+
+  input_event *inputEvent_;
 
   InputDevice(const InputDevice& daemon) = delete;
 

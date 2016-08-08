@@ -14,7 +14,7 @@ public:
 
   virtual ~OutputDevice();
 
-  void WriteInputEvent(input_event event);
+  void WriteInputEvent(input_event* event);
 
   // Outputs event that signals end of output chunk.
   void WriteSyncEvent();

@@ -46,52 +46,67 @@ KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis, Keyboard
   layerRemap_[KEY_C] = KEY_MINUS;
   layerRemap_[KEY_V] = KEY_KPPLUS;
   layerRemap_[KEY_M] = KEY_MINUS;
+
+  struct input_event ev;
+  shiftDownEvent_ = (input_event*) malloc(sizeof(ev));
+  shiftUpEvent_ = (input_event*) malloc(sizeof(ev));
+  reusableEvent1_ = (input_event*) malloc(sizeof(ev));
+  reusableEvent2_ = (input_event*) malloc(sizeof(ev));
+  memset(&ev, 0, sizeof(ev));
+  memset(reusableEvent1_, 0, sizeof(ev));
+  memset(reusableEvent2_, 0, sizeof(ev));
+  ev.type = EV_KEY;
+  ev.code = KEY_LEFTSHIFT;
+  ev.value = 1;
+  *shiftDownEvent_ = ev;
+  *shiftUpEvent_ = ev;
+  shiftUpEvent_->value = 0;
 }
 
-std::vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
-  std::vector<input_event> result;
-  if (event.type == EV_KEY) {
-    switch (event.code) {
+std::vector<input_event*> KozikowLayoutRemapper::Remap(input_event* event) {
+  std::vector<input_event*> result;
+  if (event->type == EV_KEY) {
+    switch (event->code) {
       case KEY_RIGHTMETA:
         if (keyboardType_ == mac) {
-            layerOn_ = event.value;
+            layerOn_ = event->value;
             return result;
         }
       case KEY_RIGHTALT:
         if (keyboardType_ == standard) {
-            layerOn_ = event.value;
+            layerOn_ = event->value;
             return result;
         }
       case KEY_LEFTALT:
         if (keyboardType_ == standard) {
-          event.code = KEY_LEFTMETA;
+          event->code = KEY_LEFTMETA;
         }
         result.push_back(event);
         return result;
       case KEY_LEFTMETA:
         if (keyboardType_ == standard) {
-          event.code = KEY_LEFTALT;
+          event->code = KEY_LEFTALT;
         }
         result.push_back(event);
         return result;
       case KEY_SYSRQ:
         // It is what prtscrn on Thinkpad Carbon gets registered as.
         if (keyboardType_ == standard) {
-          event.code = KEY_RIGHTALT;
+          event->code = KEY_RIGHTALT;
         }
         result.push_back(event);
         return result;
       case KEY_CAPSLOCK:
-        event.code = KEY_LEFTCTRL;
+        event->code = KEY_LEFTCTRL;
         return ModifierOrKeyPress(event, KEY_ESC);
       case KEY_ENTER: 
-        event.code = KEY_RIGHTCTRL;
+        event->code = KEY_RIGHTCTRL;
         return ModifierOrKeyPress(event, KEY_ENTER);
       default:
         keyPressedSinceModifier_ = true;
         if (layerOn_) {
           result.push_back(LayerOnRemap(event));
-          if (event.code == KEY_M || event.code == KEY_D || event.code == KEY_F) {
+          if (event->code == KEY_M || event->code == KEY_D || event->code == KEY_F) {
             WrapInShift(result);
           }
         } else {
@@ -105,20 +120,23 @@ std::vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
   return result;
 }
   
-std::vector<input_event> KozikowLayoutRemapper::ModifierOrKeyPress(input_event event, 
+std::vector<input_event*> KozikowLayoutRemapper::ModifierOrKeyPress(input_event* event, 
     int pressEventCode) {
-  std::vector<input_event> result;
+  std::vector<input_event*> result;
   result.push_back(event);
-  if (event.value == 1) {
-    modifierPressTime_[event.code] = std::chrono::high_resolution_clock::now();
+  if (event->value == 1) {
+    modifierPressTime_[event->code] = std::chrono::high_resolution_clock::now();
     keyPressedSinceModifier_ = false;
-  } else if (event.value == 0) {
+  } else if (event->value == 0) {
     if (!keyPressedSinceModifier_) {
-      if (ModifierRecentlyPressed(event.code)) {
-        input_event pressEvent = KeyPressEvent(pressEventCode);
-        result.push_back(pressEvent);
-        pressEvent.value = 0; // key release
-        result.push_back(pressEvent);
+      if (ModifierRecentlyPressed(event->code)) {
+        reusableEvent1_->value = 1;
+        reusableEvent1_->type = EV_KEY;
+        reusableEvent1_->code = pressEventCode;
+        result.push_back(reusableEvent1_);
+        *reusableEvent2_ = *reusableEvent1_;
+        reusableEvent2_->value = 0;
+        result.push_back(reusableEvent2_);
       }
     }
   }
@@ -132,25 +150,14 @@ bool KozikowLayoutRemapper::ModifierRecentlyPressed(int keyCode) {
   return elapsedMs.count() < modifierTimeoutMillis_;
 }
   
-input_event KozikowLayoutRemapper::LayerOnRemap(input_event event) {
-  event.code = layerRemap_[event.code];
+input_event* KozikowLayoutRemapper::LayerOnRemap(input_event* event) {
+  event->code = layerRemap_[event->code];
   return event;
 }
 
-void KozikowLayoutRemapper::WrapInShift(std::vector<input_event>& events) {
-  input_event shiftEvent = KeyPressEvent(KEY_LEFTSHIFT);
-  events.insert(events.begin(), shiftEvent);
-  shiftEvent.value = 0; // key release
-  events.push_back(shiftEvent);
-}
-  
-input_event KozikowLayoutRemapper::KeyPressEvent(int eventCode) {
-  input_event ev;
-  memset(&ev, 0, sizeof(ev));
-  ev.type = EV_KEY;
-  ev.code = eventCode;
-  ev.value = 1;
-  return ev;
+void KozikowLayoutRemapper::WrapInShift(std::vector<input_event*>& events) {
+  events.insert(events.begin(), shiftDownEvent_);
+  events.push_back(shiftUpEvent_);
 }
 
 }  // end namespace keyremaplinux

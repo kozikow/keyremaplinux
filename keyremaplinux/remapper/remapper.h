@@ -12,7 +12,7 @@ public:
 
   virtual ~Remapper() {};
 
-  virtual std::vector<input_event> Remap(input_event event) = 0;
+  virtual std::vector<input_event*> Remap(input_event* event) = 0;
 
 private:
 

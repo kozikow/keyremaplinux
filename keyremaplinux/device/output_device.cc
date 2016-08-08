@@ -80,8 +80,8 @@ void OutputDevice::CreateDeviceFromUInput() {
   CHECK(!ioctl(outputDescriptor_, UI_DEV_CREATE));
 }
 
-void OutputDevice::WriteInputEvent(input_event event) {
-  CHECK(write(outputDescriptor_, &event, sizeof(event)) > 0);
+void OutputDevice::WriteInputEvent(input_event* event) {
+  CHECK(write(outputDescriptor_, event, sizeof(*event)) > 0);
 }
 
 void OutputDevice::WriteSyncEvent() {

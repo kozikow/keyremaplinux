@@ -18,18 +18,18 @@ public:
 
   virtual ~KozikowLayoutRemapper() {};
 
-  virtual std::vector<input_event> Remap(input_event event) override;
+  virtual std::vector<input_event*> Remap(input_event* event) override;
   
 private:
-  input_event LayerOnRemap(input_event event);
+  input_event* LayerOnRemap(input_event* event);
 
-  std::vector<input_event> ModifierOrKeyPress(input_event event, int pressEventCode);
+  std::vector<input_event*> ModifierOrKeyPress(input_event* event, int pressEventCode);
 
   bool ModifierRecentlyPressed(int keyCode);
 
-  static input_event KeyPressEvent(int eventCode);
+  static input_event* KeyPressEvent(int eventCode);
 
-  static void WrapInShift(std::vector<input_event>&);
+  void WrapInShift(std::vector<input_event*>&);
 
 
   int modifierTimeoutMillis_;
@@ -39,6 +39,13 @@ private:
   bool layerOn_ = false;
 
   bool keyPressedSinceModifier_ = false;
+
+  input_event* shiftDownEvent_;
+  input_event* shiftUpEvent_;
+
+  // It is reusable event struct to avoid allocations.
+  input_event* reusableEvent1_;
+  input_event* reusableEvent2_;
   
   std::chrono::high_resolution_clock::time_point modifierPressTime_[KEY_MAX];
 
