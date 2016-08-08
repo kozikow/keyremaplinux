@@ -74,6 +74,12 @@ std::vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
         }
         result.push_back(event);
         return result;
+      case KEY_SYSRQ:
+        if (keyboardType_ == standard) {
+          event.code = KEY_RIGHTALT;
+        }
+        result.push_back(event);
+        return result;
       case KEY_CAPSLOCK:
         event.code = KEY_LEFTCTRL;
         return ModifierOrKeyPress(event, KEY_ESC);

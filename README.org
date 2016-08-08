@@ -53,7 +53,7 @@ Primarily focused on implementing [[https://kozikow.wordpress.com/2013/11/15/the
 #+END_SRC
 ** Start keyremaplinux with extra paramenters for higher cpu priority
 #+BEGIN_SRC bash
-  sudo nice -n -20 ./bazel-bin/keyremaplinux/keyremaplinux
+  sudo nice -n -20 ./bazel-bin/keyremaplinux/keyremaplinux kozikow_standard
 #+END_SRC
 * Implementing the new layout
 1. Extend [[https://github.com/kozikow/keyremaplinux/blob/master/keyremaplinux/remapper/remapper.h][Remapper]] and implement function [[https://github.com/kozikow/keyremaplinux/blob/master/keyremaplinux/remapper/remapper.h#L15][Remap]].
