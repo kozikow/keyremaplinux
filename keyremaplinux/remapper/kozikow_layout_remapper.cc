@@ -75,6 +75,7 @@ std::vector<input_event> KozikowLayoutRemapper::Remap(input_event event) {
         result.push_back(event);
         return result;
       case KEY_SYSRQ:
+        // It is what prtscrn on Thinkpad Carbon gets registered as.
         if (keyboardType_ == standard) {
           event.code = KEY_RIGHTALT;
         }
@@ -109,7 +110,6 @@ std::vector<input_event> KozikowLayoutRemapper::ModifierOrKeyPress(input_event e
   std::vector<input_event> result;
   result.push_back(event);
   if (event.value == 1) {
-    LOG(INFO) << "Pressing " << event.code;
     modifierPressTime_[event.code] = std::chrono::high_resolution_clock::now();
     keyPressedSinceModifier_ = false;
   } else if (event.value == 0) {
@@ -129,12 +129,10 @@ bool KozikowLayoutRemapper::ModifierRecentlyPressed(int keyCode) {
   auto elapsed = (std::chrono::high_resolution_clock::now() -
       modifierPressTime_[keyCode]);
   std::chrono::milliseconds elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds> (elapsed);
-  LOG(INFO) << "Elapsed duration: " << elapsedMs.count();
   return elapsedMs.count() < modifierTimeoutMillis_;
 }
   
 input_event KozikowLayoutRemapper::LayerOnRemap(input_event event) {
-  LOG(INFO) << "GOT CODE " << event.code;
   event.code = layerRemap_[event.code];
   return event;
 }
