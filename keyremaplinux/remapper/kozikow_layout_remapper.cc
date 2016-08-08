@@ -105,8 +105,9 @@ std::vector<input_event*> KozikowLayoutRemapper::Remap(input_event* event) {
       default:
         keyPressedSinceModifier_ = true;
         if (layerOn_) {
+          int oldCode = event->code;
           result.push_back(LayerOnRemap(event));
-          if (event->code == KEY_M || event->code == KEY_D || event->code == KEY_F) {
+          if (oldCode == KEY_M || oldCode == KEY_D || oldCode == KEY_F) {
             WrapInShift(result);
           }
         } else {
