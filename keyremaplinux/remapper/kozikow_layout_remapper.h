@@ -23,6 +23,8 @@ public:
 private:
   input_event* LayerOnRemap(input_event* event);
 
+  int GetRemapCode(int code);
+
   std::vector<input_event*> ModifierOrKeyPress(input_event* event, int pressEventCode);
 
   bool ModifierRecentlyPressed(int keyCode);
@@ -47,9 +49,7 @@ private:
   input_event* reusableEvent1_;
   input_event* reusableEvent2_;
   
-  std::chrono::high_resolution_clock::time_point modifierPressTime_[KEY_MAX];
-
-  int layerRemap_[KEY_MAX+1];
+  std::chrono::high_resolution_clock::time_point modifierPressTime_;
 };
 
 }  // end namespace keyremaplinux

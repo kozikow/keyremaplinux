@@ -11,42 +11,6 @@ namespace keyremaplinux {
 
 KozikowLayoutRemapper::KozikowLayoutRemapper(int modifierTimeoutMillis, KeyboardType keyboardType) :
   modifierTimeoutMillis_(modifierTimeoutMillis), keyboardType_(keyboardType) {
-  for (int i=0; i<=KEY_MAX; i++) {
-    layerRemap_[i] = i;
-  }
-
-  // First row
-  layerRemap_[KEY_Q] = KEY_1;
-  layerRemap_[KEY_W] = KEY_2;
-  layerRemap_[KEY_E] = KEY_3;
-  layerRemap_[KEY_R] = KEY_4;
-  layerRemap_[KEY_T] = KEY_5;
-  layerRemap_[KEY_Y] = KEY_6;
-  layerRemap_[KEY_U] = KEY_7;
-  layerRemap_[KEY_I] = KEY_8;
-  layerRemap_[KEY_O] = KEY_9;
-  layerRemap_[KEY_P] = KEY_0;
-
-  // second row
-  layerRemap_[KEY_A] = KEY_KPLEFTPAREN;
-  layerRemap_[KEY_S] = KEY_KPRIGHTPAREN;
-  layerRemap_[KEY_D] = KEY_LEFTBRACE;
-  layerRemap_[KEY_F] = KEY_RIGHTBRACE;
-  layerRemap_[KEY_G] = KEY_GRAVE;
-  layerRemap_[KEY_H] = KEY_LEFT;
-  layerRemap_[KEY_J] = KEY_DOWN;
-  layerRemap_[KEY_K] = KEY_UP;
-  layerRemap_[KEY_L] = KEY_RIGHT;
-  layerRemap_[KEY_SEMICOLON] = KEY_EQUAL;
-  layerRemap_[KEY_APOSTROPHE] = KEY_BACKSLASH;
-
-  // Third row
-  layerRemap_[KEY_Z] = KEY_LEFTBRACE;
-  layerRemap_[KEY_X] = KEY_RIGHTBRACE;
-  layerRemap_[KEY_C] = KEY_MINUS;
-  layerRemap_[KEY_V] = KEY_KPPLUS;
-  layerRemap_[KEY_M] = KEY_MINUS;
-
   struct input_event ev;
   shiftDownEvent_ = (input_event*) malloc(sizeof(ev));
   shiftUpEvent_ = (input_event*) malloc(sizeof(ev));
