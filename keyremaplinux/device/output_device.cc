@@ -86,7 +86,7 @@ void OutputDevice::WriteInputEvent(input_event* event) {
 
 void OutputDevice::WriteSyncEvent() {
   CHECK(write(outputDescriptor_, syncEvent_, sizeof(*syncEvent_)) >= 0);
-  fsync(outputDescriptor_);
+  CHECK(fsync(outputDescriptor_));
 }
   
 }  // end namespace keyremaplinux
