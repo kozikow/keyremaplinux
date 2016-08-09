@@ -126,7 +126,7 @@ std::vector<input_event*> KozikowLayoutRemapper::ModifierOrKeyPress(input_event*
   std::vector<input_event*> result;
   result.push_back(event);
   if (event->value == 1) {
-    modifierPressTime_[event->code] = std::chrono::high_resolution_clock::now();
+    modifierPressTime_ = std::chrono::high_resolution_clock::now();
     keyPressedSinceModifier_ = false;
   } else if (event->value == 0) {
     if (!keyPressedSinceModifier_) {
@@ -146,13 +146,92 @@ std::vector<input_event*> KozikowLayoutRemapper::ModifierOrKeyPress(input_event*
 
 bool KozikowLayoutRemapper::ModifierRecentlyPressed(int keyCode) {
   auto elapsed = (std::chrono::high_resolution_clock::now() -
-      modifierPressTime_[keyCode]);
+      modifierPressTime_);
   std::chrono::milliseconds elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds> (elapsed);
   return elapsedMs.count() < modifierTimeoutMillis_;
 }
+
+int KozikowLayoutRemapper::GetRemapCode(int code) {
+  // Initially I had an array that I used for lookup.
+  // It was too slow.
+  if (code <= KEY_P) {
+    if (code <= KEY_T) {
+      switch(code) {
+      case KEY_Q:
+        return KEY_1;
+      case KEY_W:
+        return KEY_2;
+      case KEY_E:
+        return KEY_3;
+      case KEY_R:
+        return KEY_4;
+      case KEY_T:
+        return KEY_5;
+      }
+    } else {
+      switch(code) {
+      case KEY_Y:
+        return KEY_6;
+      case KEY_U:
+        return KEY_7;
+      case KEY_I:
+        return KEY_8;
+      case KEY_O:
+        return KEY_9;
+      case KEY_P:
+        return KEY_0;
+      }
+    }
+  } else if (code <= KEY_APOSTROPHE) {
+    if (code <= KEY_H) {
+      switch(code) {
+      case KEY_H:
+        return KEY_LEFT;
+      case KEY_A:
+        return KEY_KPLEFTPAREN;
+      case KEY_S:
+        return KEY_KPRIGHTPAREN;
+      case KEY_D:
+        return KEY_LEFTBRACE;
+      case KEY_F:
+        return KEY_RIGHTBRACE;
+      case KEY_G:
+        return KEY_GRAVE;
+      }
+    } else {
+      switch(code) {
+      case KEY_J:
+        return KEY_DOWN;
+      case KEY_K:
+        return KEY_UP;
+      case KEY_L:
+        return KEY_RIGHT;
+      case KEY_SEMICOLON:
+        return KEY_EQUAL;
+      case KEY_APOSTROPHE:
+        return KEY_BACKSLASH;
+      }
+    }
+  }
+  else {
+    switch (code) {
+    case KEY_Z:
+      return KEY_LEFTBRACE;
+    case KEY_X:
+      return KEY_RIGHTBRACE;
+    case KEY_C:
+      return KEY_MINUS;
+    case KEY_V:
+      return KEY_KPPLUS;
+    case KEY_M:
+      return KEY_MINUS;
+    }
+  }
+  return code;
+}
   
 input_event* KozikowLayoutRemapper::LayerOnRemap(input_event* event) {
-  event->code = layerRemap_[event->code];
+  event->code = GetRemapCode(event->code);
   return event;
 }
 
