@@ -1,0 +1,10 @@
+[Unit]
+Description=Daemon remapping keyboard. See https://github.com/kozikow/keyremaplinux.  
+
+[Service]
+User=root
+Restart=on-failure
+ExecStart=/usr/bin/nice -n -20 keyremaplinux kozikow_standard
+
+[Install]
+WantedBy=multi-user.target
