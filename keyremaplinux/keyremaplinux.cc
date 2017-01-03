@@ -16,7 +16,7 @@ namespace keyremaplinux {
   static const std::string dirName = "/dev/input";
 
   static const std::string devicesCmd = (std::string) "cat /proc/bus/input/" +
-      "devices | grep Handlers | grep kbd | grep -o \"event[0-9]*\"";
+      "devices | grep Handlers | grep kbd | grep -v mouse | grep -o \"event[0-9]*\"";
 
   std::vector<std::string> FindKeyboardDevices() {
     // Finds list of keyboards based on contests of the /proc/bus/input/devices.
