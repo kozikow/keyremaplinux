@@ -5,6 +5,7 @@ Description=Daemon remapping keyboard. See https://github.com/kozikow/keyremapli
 User=root
 Restart=on-failure
 ExecStart=/usr/bin/nice -n -20 keyremaplinux kozikow_standard
+Type=idle
 
 [Install]
 WantedBy=multi-user.target
